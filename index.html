@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Logistics Company Template</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Icons (Bootstrap Icons) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Leaflet (mapa) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+  <!-- Custom Styles hola-->
+  <style>
+    :root {
+      --primary: #ffb400;
+      --dark: #0f172a;
+      --light: #f8fafc;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Navbar */
+    .navbar-brand span {
+      color: var(--primary);
+    }
+
+    .topbar {
+      background: var(--dark);
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      padding: 0.3rem 0;
+    }
+
+    .topbar a {
+      color: #e5e7eb;
+      text-decoration: none;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #020617 0%, #111827 50%, #1f2937 100%);
+      color: white;
+      padding: 6rem 0 4rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .hero-title span {
+      color: var(--primary);
+    }
+
+    .hero-lead {
+      color: #e5e7eb;
+      max-width: 520px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: 50px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-img-wrapper {
+      position: relative;
+      max-width: 450px;
+      margin-left: auto;
+    }
+
+    .hero-img-main {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-stats {
+      position: absolute;
+      bottom: -1rem;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      max-width: 360px;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-stat-number {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    /* Sections */
+    section {
+      padding: 4rem 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      color: #6b7280;
+    }
+
+    /* About & Facts */
+    .icon-square {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(234, 179, 8, 0.15);
+      color: #ca8a04;
+      font-size: 1.3rem;
+    }
+
+    .facts-box {
+      background: var(--dark);
+      color: #e5e7eb;
+      border-radius: 1.5rem;
+      padding: 2rem;
+    }
+
+    .facts-stat {
+      text-align: center;
+    }
+
+    .facts-stat h3 {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* Services */
+    .service-card {
+      border-radius: 1.2rem;
+      border: 1px solid #e5e7eb;
+      padding: 1.8rem 1.6rem;
+      height: 100%;
+      transition: transform 0.15s ease, box-shadow 0.15s ease,
+      border-color 0.15s ease;
+      background: white;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      border-color: rgba(234, 179, 8, 0.8);
+    }
+
+    /* Features */
+    .feature-list li {
+      margin-bottom: 0.7rem;
+    }
+
+    .feature-list i {
+      color: #22c55e;
+      margin-right: 0.35rem;
+    }
+
+    /* Pricing */
+    .pricing-card {
+      border-radius: 1.4rem;
+      border: 1px solid #e5e7eb;
+      padding: 2.2rem 1.8rem;
+      height: 100%;
+      background: white;
+      transition: transform 0.15s ease, box-shadow 0.15s ease,
+      border-color 0.15s ease;
+    }
+
+    .pricing-card.highlight {
+      border-color: var(--primary);
+      box-shadow: 0 20px 45px rgba(234, 179, 8, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card.highlight::before {
+      content: "POPULAR";
+      position: absolute;
+      top: 1.1rem;
+      right: -3rem;
+      width: 10rem;
+      text-align: center;
+      transform: rotate(35deg);
+      background: var(--primary);
+      color: #111827;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0;
+    }
+
+    .pricing-price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Quote */
+    .quote-section {
+      background: var(--dark);
+      color: white;
+      border-radius: 1.8rem;
+      padding: 2.5rem 2rem;
+    }
+
+    .badge-soft {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 0.1rem 0.7rem;
+      font-size: 0.75rem;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    /* Team */
+    .team-card {
+      border-radius: 1.2rem;
+      border: 1px solid #e5e7eb;
+      padding: 1.1rem;
+      text-align: center;
+      background: white;
+    }
+
+    .team-img {
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      margin-bottom: 0.7rem;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+      border-radius: 1.2rem;
+      border: 1px solid #e5e7eb;
+      padding: 1.6rem;
+      background: #f9fafb;
+      height: 100%;
+    }
+
+    .testimonial-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #4b5563;
+      margin-right: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #020617;
+      color: #9ca3af;
+      padding: 3rem 0 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #e5e7eb;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-title {
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #111827;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    /* Mensajes pequeños en formularios tracking */
+    .mensaje {
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <i class="bi bi-telephone me-2"></i>+012 345 6789
+        <span class="ms-3"><i class="bi bi-geo-alt me-1"></i>123 Street, Kampala, Uganda</span>
+      </div>
+      <div class="d-none d-md-block">
+        <a href="#"><i class="bi bi-facebook me-2"></i></a>
+        <a href="#"><i class="bi bi-twitter me-2"></i></a>
+        <a href="#"><i class="bi bi-linkedin"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        logist<span>ya</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Pages</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#pricing">Pricing Plan</a></li>
+              <li><a class="dropdown-item" href="#features">Features</a></li>
+              <li><a class="dropdown-item" href="#quote">Free Quote</a></li>
+              <li><a class="dropdown-item" href="#team">Our Team</a></li>
+              <li><a class="dropdown-item" href="#testimonial">Testimonial</a></li>
+              <li><a class="dropdown-item" href="#tracking">Rastreo de pallets NFC</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+            <a href="#quote" class="btn btn-warning fw-semibold">
+              Free Quote
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header id="home" class="hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <div class="hero-badge">
+            <span class="badge bg-warning text-dark">Transport & Logistics Solution</span>
+            <span>Since 1990</span>
+          </div>
+          <h1 class="hero-title mb-3">
+            #1 Place For Your <span>Logistics</span> Solution
+          </h1>
+          <p class="hero-lead mb-4">
+            We provide fast, flexible and reliable logistics services worldwide.
+            Manage all your shipments from one modern platform with real-time tracking.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="#about" class="btn btn-warning text-dark fw-semibold px-4 py-2">
+              Read More
+            </a>
+            <a href="#quote" class="btn btn-outline-light fw-semibold px-4 py-2">
+              Free Quote
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="hero-img-wrapper">
+            <div class="hero-img-main">
+              <img src="https://images.pexels.com/photos/4484078/pexels-photo-4484078.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Logistics" class="img-fluid">
+            </div>
+            <div class="hero-stats">
+              <div>
+                <div class="hero-stat-number">1234</div>
+                <div class="small">Happy Clients</div>
+              </div>
+              <div>
+                <div class="hero-stat-number">5678</div>
+                <div class="small">Shipments</div>
+              </div>
+              <div>
+                <div class="hero-stat-number">4.9★</div>
+                <div class="small">Client Rating</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- About & Facts -->
+  <section id="about">
+    <div class="container">
+      <div class="row g-5 align-items-start">
+        <div class="col-lg-6">
+          <p class="text-warning fw-semibold mb-1">About Us</p>
+          <h2 class="mb-3">Quick Transport and Logistics Solutions</h2>
+          <p class="text-muted">
+            We deliver tailored logistics services for businesses of all sizes: from
+            local transport to full global supply chains. Our team ensures on-time delivery,
+            secure handling and transparent communication.
+          </p>
+          <div class="row g-3 mt-3">
+            <div class="col-sm-6 d-flex">
+              <div class="me-3">
+                <div class="icon-square">
+                  <i class="bi bi-globe-americas"></i>
+                </div>
+              </div>
+              <div>
+                <h6>Global Coverage</h6>
+                <p class="small text-muted mb-0">
+                  Network of trusted partners covering major ports, airports and road corridors.
+                </p>
+              </div>
+            </div>
+            <div class="col-sm-6 d-flex">
+              <div class="me-3">
+                <div class="icon-square">
+                  <i class="bi bi-clock-history"></i>
+                </div>
+              </div>
+              <div>
+                <h6>On Time Delivery</h6>
+                <p class="small text-muted mb-0">
+                  Real-time tracking and proactive updates so your cargo arrives as planned.
+                </p>
+              </div>
+            </div>
+          </div>
+          <a href="#features" class="btn btn-warning text-dark fw-semibold mt-4">
+            Explore More
+          </a>
+        </div>
+        <div class="col-lg-6">
+          <div class="facts-box">
+            <p class="text-warning fw-semibold mb-1">Some Facts</p>
+            <h3 class="mb-4">#1 Place To Manage All Of Your Shipments</h3>
+            <p class="mb-4">
+              Use a single dashboard to request quotes, compare modes, confirm bookings
+              and monitor every shipment from pickup to final delivery.
+            </p>
+            <div class="row text-center g-4">
+              <div class="col-4 facts-stat">
+                <h3>1234</h3>
+                <p class="small mb-0">Happy Clients</p>
+              </div>
+              <div class="col-4 facts-stat">
+                <h3>1234</h3>
+                <p class="small mb-0">Complete Shipments</p>
+              </div>
+              <div class="col-4 facts-stat">
+                <h3>1234</h3>
+                <p class="small mb-0">Customer Reviews</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <p class="small mb-1 text-secondary">Call for any query!</p>
+              <h4 class="text-warning mb-0">+012 345 6789</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title">Explore Our Services</h2>
+      <p class="section-subtitle">
+        From air freight to warehouse solutions, we combine experience, technology
+        and partners to move your cargo safely and efficiently.
+      </p>
+      <div class="row g-4">
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-airplane"></i>
+            </div>
+            <h5>Air Freight</h5>
+            <p class="text-muted small">
+              Fast and reliable air freight services with end-to-end visibility and customs support.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-water"></i>
+            </div>
+            <h5>Ocean Freight</h5>
+            <p class="text-muted small">
+              Flexible FCL and LCL options, schedule reliability and competitive rates across major trade lanes.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-truck"></i>
+            </div>
+            <h5>Road Freight</h5>
+            <p class="text-muted small">
+              Regional and cross-border trucking services including last-mile delivery.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-train-front"></i>
+            </div>
+            <h5>Train Freight</h5>
+            <p class="text-muted small">
+              Cost-efficient intermodal rail solutions for bulk and containerized cargo.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-file-earmark-check"></i>
+            </div>
+            <h5>Customs Clearance</h5>
+            <p class="text-muted small">
+              Professional customs brokerage to ensure compliance and smooth border crossings.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="service-card">
+            <div class="icon-square mb-3">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <h5>Warehouse Solutions</h5>
+            <p class="text-muted small">
+              Modern warehousing, inventory management and value-added services close to your customers.
+            </p>
+            <a href="#" class="small text-warning fw-semibold">Read More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+          <p class="text-warning fw-semibold mb-1">Our Features</p>
+          <h2 class="mb-3">We Are Trusted Logistics Company Since 1990</h2>
+          <p class="text-muted">
+            We combine experienced people, proven processes and advanced technology
+            to deliver consistent, high-quality logistics services at scale.
+          </p>
+          <ul class="feature-list list-unstyled mt-3">
+            <li><i class="bi bi-check-circle-fill"></i> Worldwide Service with reliable carriers and partners.</li>
+            <li><i class="bi bi-check-circle-fill"></i> On Time Delivery thanks to proactive planning and tracking.</li>
+            <li><i class="bi bi-check-circle-fill"></i> 24/7 Telephone Support for urgent requests and updates.</li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <img src="https://images.pexels.com/photos/4484077/pexels-photo-4484077.jpeg?auto=compress&cs=tinysrgb&w=1200" class="img-fluid rounded-4 shadow" alt="Features">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="container">
+      <h2 class="section-title">Perfect Pricing Plan</h2>
+      <p class="section-subtitle">
+        Choose the plan that fits your business. All plans include core features
+        like responsive tracking, modern UI and cross-browser support.
+      </p>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="pricing-card h-100">
+            <h5 class="mb-2">Basic Plan</h5>
+            <div class="pricing-price mb-1">$49.00</div>
+            <div class="small text-muted mb-3">/ Month</div>
+            <ul class="list-unstyled small text-muted mb-3">
+              <li>HTML5 &amp; CSS3</li>
+              <li>Bootstrap v5</li>
+              <li>FontAwesome / Icons</li>
+              <li>Responsive Layout</li>
+              <li>Cross-browser Support</li>
+            </ul>
+            <a href="#" class="btn btn-outline-warning w-100">Order Now</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="pricing-card highlight h-100">
+            <h5 class="mb-2">Standard Plan</h5>
+            <div class="pricing-price mb-1">$99.00</div>
+            <div class="small text-muted mb-3">/ Month</div>
+            <ul class="list-unstyled small text-muted mb-3">
+              <li>All Basic Features</li>
+              <li>Priority Support</li>
+              <li>Extended Components</li>
+              <li>Custom Color Options</li>
+              <li>Free Updates</li>
+            </ul>
+            <a href="#" class="btn btn-warning text-dark w-100">Order Now</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="pricing-card h-100">
+            <h5 class="mb-2">Advanced Plan</h5>
+            <div class="pricing-price mb-1">$149.00</div>
+            <div class="small text-muted mb-3">/ Month</div>
+            <ul class="list-unstyled small text-muted mb-3">
+              <li>Everything in Standard</li>
+              <li>Custom Integrations</li>
+              <li>Advanced Analytics</li>
+              <li>Dedicated Account Manager</li>
+              <li>Service Level Agreements</li>
+            </ul>
+            <a href="#" class="btn btn-outline-warning w-100">Order Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote -->
+  <section id="quote">
+    <div class="container">
+      <div class="quote-section">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-6">
+            <span class="badge-soft mb-2 d-inline-block">Get A Quote</span>
+            <h2 class="mb-3">Pendiente</h2>
+            <p class="mb-4">
+              Pendiente
+            </p>
+            <p class="small mb-1 text-secondary">LLama</p>
+            <h4 class="text-warning mb-0">+012 345 6789</h4>
+          </div>
+          <div class="col-lg-6">
+            <form class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small">Your Name</label>
+                <input type="text" class="form-control" placeholder="John Doe">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small">Your Email</label>
+                <input type="email" class="form-control" placeholder="name@example.com">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small">Select A Freight</label>
+                <select class="form-select">
+                  <option selected>Choose...</option>
+                  <option>Air Freight</option>
+                  <option>Ocean Freight</option>
+                  <option>Road Freight</option>
+                  <option>Rail Freight</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small">Estimated Weight (kg)</label>
+                <input type="text" class="form-control" placeholder="e.g. 1500">
+              </div>
+              <div class="col-12">
+                <label class="form-label small">Message</label>
+                <textarea class="form-control" rows="3" placeholder="Route, deadlines, special requirements..."></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-warning text-dark fw-semibold w-100">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rastreo de Pallets con NFC -->
+  <section id="tracking" class="py-5" style="background:#f3f4f6;">
+
+   <div id="alerta-banner" class="alert alert-danger d-none" role="alert">
+     <strong>Alerta de caja:</strong>
+     <span id="alerta-texto"></span>
+   </div>
+
+
+    <div class="container">
+      <h2 class="mb-4 fw-bold text-center">Rastreo de Pallets con NFC</h2>
+      <p class="text-center text-muted mb-4">
+        Registra cada pallet con su tag NFC, controla sus movimientos por área y visualiza su historial.
+      </p>
+
+      <!-- Alta de caja / pallet / movimiento -->
+      <div class="row g-4 mb-4">
+
+        <!-- Alta de caja / Arduino -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Alta de caja / Arduino</h5>
+              <form id="form-caja" class="row g-3">
+                <div class="col-12">
+                  <label for="caja-id" class="form-label">ID caja</label>
+                  <input type="text" id="caja-id" class="form-control" required placeholder="Ej: CX-001" />
+                </div>
+
+                <div class="col-12">
+                  <label for="caja-nombre" class="form-label">Nombre / descripción</label>
+                  <input type="text" id="caja-nombre" class="form-control" placeholder="Ej: Caja 1 FF-2" />
+                </div>
+
+                <div class="col-12">
+                  <label for="caja-ubicacion" class="form-label">Ubicación</label>
+                  <input type="text" id="caja-ubicacion" class="form-control" placeholder="Ej: Bodega Barry, Rampa 1" />
+                </div>
+
+                <div class="col-12">
+                  <label for="caja-arduino" class="form-label">ID Arduino / Nano</label>
+                  <input type="text" id="caja-arduino" class="form-control" placeholder="Ej: NANO-01" />
+                </div>
+
+                <div class="col-6">
+                  <label for="caja-umbral-h" class="form-label">Umbral humedad (%)</label>
+                  <input type="text" id="caja-umbral-h" class="form-control" placeholder="Ej: 70" />
+                </div>
+
+                <div class="col-6">
+                  <label for="caja-umbral-g" class="form-label">Umbral golpe</label>
+                  <input type="text" id="caja-umbral-g" class="form-control" placeholder="Ej: 1.5 g" />
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark w-100">Registrar caja</button>
+                  <div id="msg-caja" class="mensaje"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alta de pallet -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Alta de pallet</h5>
+              <form id="palletForm" class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">ID Pallet / Tag NFC</label>
+                  <input type="text" class="form-control" id="palletId" placeholder="NFC-0001" required>
+                </div>
+
+                <div class="col-12">
+                  <label for="pallet-caja-rel" class="form-label">Caja / Arduino</label>
+                  <select id="pallet-caja-rel" class="form-select" required>
+                    <option value="">Selecciona una caja...</option>
+                    <!-- Se llena dinámicamente con JS -->
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Cliente</label>
+                  <input type="text" class="form-control" id="palletCliente" placeholder="Rheem FF-2">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark w-100">
+                    Registrar pallet
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registro de movimiento -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Registro de movimiento</h5>
+              <form id="movementForm" class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Selecciona un pallet</label>
+                  <select id="movementPallet" class="form-select" required>
+                    <option value="">Selecciona un pallet...</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Tipo de movimiento</label>
+                  <input type="text" class="form-control" id="movementTipo"
+                         placeholder="Entrada a bodega, salida a cliente, re-trabajo..." required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Ubicación / área</label>
+                  <input type="text" class="form-control" id="movementUbicacion"
+                         placeholder="Bodega Barry, FF-2, Piso, Cuarentena, Scrap..." required>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark w-100">
+                    Registrar movimiento
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Historial + Mapa -->
+      <div class="row g-4">
+        <!-- Historial de movimientos -->
+        <div class="col-lg-7">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="card-title mb-0">Historial de movimientos</h5>
+                <div class="d-flex gap-2">
+                  <input type="text" id="filterPallet" class="form-control form-control-sm"
+                         placeholder="Filtrar por ID de pallet">
+                  <button class="btn btn-outline-secondary btn-sm" id="clearFilter">Limpiar filtro</button>
+                </div>
+              </div>
+
+              <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                <table class="table table-sm align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Fecha / hora</th>
+                      <th>ID Pallet</th>
+                      <th>N. caja</th>
+                      <th>Cliente</th>
+                      <th>Tipo</th>
+                      <th>Ubicación</th>
+                    </tr>
+                  </thead>
+                  <tbody id="historyBody">
+                    <!-- Se llena con JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa -->
+        <div class="col-lg-5">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Mapa de Nuevo Laredo</h5>
+              <p class="small text-muted">
+                Vista general de la ciudad. Más adelante podemos vincular las áreas
+                (bodega, piso, cuarentena, cliente) a puntos específicos del mapa.
+              </p>
+              <div id="palletMap" style="width: 100%; height: 320px; border-radius: 0.75rem; overflow: hidden;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertas de sensores debajo del historial -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Alertas de sensores (humedad / choque)</h5>
+              <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0" id="tabla-alertas">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Fecha / hora</th>
+                      <th>Caja</th>
+                      <th>Tipo</th>
+                      <th>Valor</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Se llena por JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section id="team">
+    <div class="container">
+      <h2 class="section-title">Expert Team Members</h2>
+      <p class="section-subtitle">
+        Our experienced logistics specialists coordinate each step of your supply chain.
+      </p>
+      <div class="row g-4">
+        <div class="col-md-3 col-6">
+          <div class="team-card">
+            <img src="https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Team" class="team-img">
+            <h6 class="mt-2 mb-0">Full Name</h6>
+            <p class="small text-muted mb-0">Designation</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="team-card">
+            <img src="https://images.pexels.com/photos/819530/pexels-photo-819530.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Team" class="team-img">
+            <h6 class="mt-2 mb-0">Full Name</h6>
+            <p class="small text-muted mb-0">Designation</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="team-card">
+            <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Team" class="team-img">
+            <h6 class="mt-2 mb-0">Full Name</h6>
+            <p class="small text-muted mb-0">Designation</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="team-card">
+            <img src="https://images.pexels.com/photos/7846335/pexels-photo-7846335.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Team" class="team-img">
+            <h6 class="mt-2 mb-0">Full Name</h6>
+            <p class="small text-muted mb-0">Designation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial -->
+  <section id="testimonial">
+    <div class="container">
+      <h2 class="section-title">Our Clients Say!</h2>
+      <p class="section-subtitle">
+        Companies across different industries trust us to move their products around the world.
+      </p>
+      <div class="row g-4">
+        <div class="col-md-6 col-xl-3">
+          <div class="testimonial-card">
+            <div class="d-flex align-items-center mb-3">
+              <div class="testimonial-avatar">A</div>
+              <div>
+                <h6 class="mb-0">Client Name</h6>
+                <p class="small text-muted mb-0">Profession</p>
+              </div>
+            </div>
+            <p class="small text-muted mb-0">
+              “Reliable partner with transparent communication. They helped us stabilize our global deliveries.”
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="testimonial-card">
+            <div class="d-flex align-items-center mb-3">
+              <div class="testimonial-avatar">B</div>
+              <div>
+                <h6 class="mb-0">Client Name</h6>
+                <p class="small text-muted mb-0">Profession</p>
+              </div>
+            </div>
+            <p class="small text-muted mb-0">
+              “Great visibility and on-time performance. The online portal is easy to use.”
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="testimonial-card">
+            <div class="d-flex align-items-center mb-3">
+              <div class="testimonial-avatar">C</div>
+              <div>
+                <h6 class="mb-0">Client Name</h6>
+                <p class="small text-muted mb-0">Profession</p>
+              </div>
+            </div>
+            <p class="small text-muted mb-0">
+              “Responsive customer support and flexible solutions for urgent shipments.”
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="testimonial-card">
+            <div class="d-flex align-items-center mb-3">
+              <div class="testimonial-avatar">D</div>
+              <div>
+                <h6 class="mb-0">Client Name</h6>
+                <p class="small text-muted mb-0">Profession</p>
+              </div>
+            </div>
+            <p class="small text-muted mb-0">
+              “We consolidated several carriers into one unified solution with clear reporting.”
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <footer id="contact">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h6 class="footer-title">Address</h6>
+          <p class="mb-1 small">123 Street, Kampala, Uganda</p>
+          <p class="mb-1 small">+012 345 67890</p>
+          <p class="mb-0 small">info@example.com</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="footer-title">Services</h6>
+          <ul class="list-unstyled small">
+            <li><a href="#services">Air Freight</a></li>
+            <li><a href="#services">Sea Freight</a></li>
+            <li><a href="#services">Road Freight</a></li>
+            <li><a href="#services">Logistic Solutions</a></li>
+            <li><a href="#services">Industry Solutions</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="footer-title">Quick Links</h6>
+          <ul class="list-unstyled small">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#services">Our Services</a></li>
+            <li><a href="#">Terms &amp; Condition</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="footer-title">Newsletter</h6>
+          <p class="small">
+            Sign up for updates about new features and logistics insights.
+          </p>
+          <form class="d-flex gap-2">
+            <input type="email" class="form-control form-control-sm" placeholder="Your email">
+            <button class="btn btn-warning btn-sm text-dark fw-semibold">SignUp</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom mt-3">
+        © Your Site Name, All Right Reserved. Designed inspired by Nestwave template.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Leaflet JS (mapa) -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+  <script>
+
+    const API_URL_ALERTAS = "https://arquitectura-lime.vercel.app/api/alertas"; 
+    let ultimaAlertaRecibida = {};
+
+    // ------- Datos en memoria -------
+    const pallets = [];
+    const movements = [];
+    const cajas = [];
+    const alertas = [];
+
+    // ------- Referencias a elementos -------
+    // Cajas
+    const formCaja = document.getElementById('form-caja');
+    const msgCaja = document.getElementById('msg-caja');
+
+    // Pallets
+    const palletForm = document.getElementById('palletForm');
+    const palletIdInput = document.getElementById('palletId');
+    const palletClienteInput = document.getElementById('palletCliente');
+    const selectCajaPallet = document.getElementById('pallet-caja-rel');
+
+    // Movimientos
+    const movementForm = document.getElementById('movementForm');
+    const movementPalletSelect = document.getElementById('movementPallet');
+    const movementTipoInput = document.getElementById('movementTipo');
+    const movementUbicacionInput = document.getElementById('movementUbicacion');
+
+    // Historial
+    const historyBody = document.getElementById('historyBody');
+    const filterPalletInput = document.getElementById('filterPallet');
+    const clearFilterBtn = document.getElementById('clearFilter');
+
+    // Alertas
+    const tablaAlertasBody = document.querySelector('#tabla-alertas tbody');
+
+    // ------- Alta de caja / Arduino -------
+    if (formCaja) {
+      formCaja.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById('caja-id').value.trim();
+        const nombre = document.getElementById('caja-nombre').value.trim();
+        const ubicacion = document.getElementById('caja-ubicacion').value.trim();
+        const arduino = document.getElementById('caja-arduino').value.trim();
+        const umbralH = document.getElementById('caja-umbral-h').value.trim();
+        const umbralG = document.getElementById('caja-umbral-g').value.trim();
+
+        if (!id) {
+          msgCaja.style.color = '#b91c1c';
+          msgCaja.textContent = 'El ID de caja es obligatorio.';
+          return;
+        }
+
+        // Evitar duplicados
+        if (cajas.some(c => c.id.toLowerCase() === id.toLowerCase())) {
+          msgCaja.style.color = '#b91c1c';
+          msgCaja.textContent = 'Ya existe una caja con ese ID.';
+          return;
+        }
+
+        cajas.push({ id, nombre, ubicacion, arduino, umbralH, umbralG });
+
+        actualizarSelectCajasParaPallet();
+
+        formCaja.reset();
+        msgCaja.style.color = '#059669';
+        msgCaja.textContent = 'Caja registrada correctamente.';
+
+        setTimeout(() => { msgCaja.textContent = ''; }, 2500);
+      });
+    }
+
+    function actualizarSelectCajasParaPallet() {
+      if (!selectCajaPallet) return;
+
+      selectCajaPallet.innerHTML = '<option value="">Selecciona una caja...</option>';
+      cajas.forEach(c => {
+        const opt = document.createElement('option');
+        const texto = c.nombre ? `${c.id} - ${c.nombre}` : c.id;
+        opt.value = c.id;
+        opt.textContent = texto;
+        selectCajaPallet.appendChild(opt);
+      });
+    }
+
+    // ------- Alta de pallet -------
+    if (palletForm) {
+      palletForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const id = palletIdInput.value.trim();
+        const cliente = palletClienteInput.value.trim();
+        const cajaRel = selectCajaPallet.value;
+
+        if (!id) {
+          alert('El ID de pallet / NFC es obligatorio');
+          return;
+        }
+        if (!cajaRel) {
+          alert('Selecciona una caja / Arduino para este pallet.');
+          return;
+        }
+
+        // evitar duplicados
+        if (pallets.some(p => p.id.toLowerCase() === id.toLowerCase())) {
+          alert('Ese ID de pallet ya existe.');
+          return;
+        }
+
+        const pallet = { id, caja: cajaRel, cliente };
+        pallets.push(pallet);
+
+        // agregar al select de movimientos
+        const opt = document.createElement('option');
+        const cajaObj = cajas.find(c => c.id === cajaRel);
+        const extraCaja = cajaObj ? ` - Caja: ${cajaObj.id}` : '';
+        opt.value = id;
+        opt.textContent = cliente ? `${id} - ${cliente}${extraCaja}` : `${id}${extraCaja}`;
+        movementPalletSelect.appendChild(opt);
+
+        palletForm.reset();
+        alert('Pallet registrado correctamente');
+      });
+    }
+
+    // ------- Registro de movimiento -------
+    if (movementForm) {
+      movementForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const palletId = movementPalletSelect.value;
+        const tipo = movementTipoInput.value.trim();
+        const ubicacion = movementUbicacionInput.value.trim();
+
+        if (!palletId || !tipo || !ubicacion) {
+          alert('Selecciona un pallet e indica tipo de movimiento y ubicación.');
+          return;
+        }
+
+        const pallet = pallets.find(p => p.id === palletId) || {};
+        const now = new Date();
+
+        const movement = {
+          fecha: now,
+          palletId,
+          caja: pallet.caja || '',
+          cliente: pallet.cliente || '',
+          tipo,
+          ubicacion
+        };
+
+        movements.push(movement);
+        movementForm.reset();
+        renderHistory();
+      });
+    }
+
+    // ------- Render del historial -------
+    function renderHistory() {
+      if (!historyBody) return;
+
+      const filtro = (filterPalletInput.value || '').trim().toLowerCase();
+      historyBody.innerHTML = '';
+
+      movements
+        .filter(m => !filtro || m.palletId.toLowerCase().includes(filtro))
+        .slice()
+        .reverse()
+        .forEach(m => {
+          const tr = document.createElement('tr');
+
+          const fechaStr = m.fecha.toLocaleString('es-MX', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          });
+
+          tr.innerHTML = `
+            <td>${fechaStr}</td>
+            <td>${m.palletId}</td>
+            <td>${m.caja || ''}</td>
+            <td>${m.cliente || ''}</td>
+            <td>${m.tipo}</td>
+            <td>${m.ubicacion}</td>
+          `;
+
+          historyBody.appendChild(tr);
+        });
+    }
+
+    if (filterPalletInput) {
+      filterPalletInput.addEventListener('input', renderHistory);
+    }
+
+    if (clearFilterBtn) {
+      clearFilterBtn.addEventListener('click', function () {
+        filterPalletInput.value = '';
+        renderHistory();
+      });
+    }
+
+    // ------- Alertas de sensores -------
+
+    function agregarAlerta(idCaja, tipo, valor) {
+      const fecha = new Date();
+      alertas.push({
+        fecha,
+        idCaja,
+        tipo,   // 'HUMEDAD' o 'CHOQUE'
+        valor,
+        estado: 'Pendiente'
+     });
+     renderAlertas();
+
+      // Mostrar banner rojo de alerta
+      const banner = document.getElementById('alerta-banner');
+      const texto = document.getElementById('alerta-texto');
+
+      if (banner && texto) {
+       texto.textContent = `Caja ${idCaja} - ${tipo} detectada (${valor}).`;
+        banner.classList.remove('d-none');
+
+        // Ocultar después de unos segundos
+        setTimeout(() => {
+          banner.classList.add('d-none');
+        }, 8000);
+      }
+    }
+
+    function renderAlertas() {
+      if (!tablaAlertasBody) return;
+      tablaAlertasBody.innerHTML = '';
+
+      alertas
+        .slice()
+        .reverse()
+        .forEach(a => {
+          const tr = document.createElement('tr');
+          const fechaStr = a.fecha.toLocaleString('es-MX', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          });
+
+          tr.innerHTML = `
+            <td>${fechaStr}</td>
+            <td>${a.idCaja}</td>
+            <td>${a.tipo}</td>
+            <td>${a.valor}</td>
+            <td>${a.estado}</td>
+          `;
+
+          tablaAlertasBody.appendChild(tr);
+        });
+    }
+
+    // (Opcional) Ejemplo de prueba de alertas para ver la tabla funcionando
+    // agregarAlerta('CX-001', 'HUMEDAD', '90 %');
+    // agregarAlerta('CX-002', 'CHOQUE', 'Impacto fuerte');
+
+    async function obtenerUltimaAlerta() {
+        try {
+            const response = await fetch(API_URL_ALERTAS);
+            
+            if (!response.ok) {
+                console.error('Error al obtener la alerta de Vercel:', response.statusText);
+                return;
+            }
+
+            const alertaVercel = await response.json();
+
+            // Si Vercel responde con un mensaje de "Sin alertas recientes" o es el mismo objeto
+            if (alertaVercel.mensaje || JSON.stringify(alertaVercel) === JSON.stringify(ultimaAlertaRecibida)) {
+                return;
+            }
+
+            // Es una alerta NUEVA
+            ultimaAlertaRecibida = alertaVercel;
+
+            // Llamar a tu función local para procesar y mostrar la alerta
+            agregarAlerta(alertaVercel.caja, alertaVercel.tipo, alertaVercel.valor);
+
+            console.log("Nueva alerta mostrada:", alertaVercel);
+
+        } catch (error) {
+            console.error("Error en el Polling:", error);
+        }
+    }
+
+
+    // ------- Mapa de Nuevo Laredo -------
+    let map;
+    document.addEventListener('DOMContentLoaded', function () {
+      const mapDiv = document.getElementById('palletMap');
+      if (mapDiv && typeof L !== 'undefined') {
+        map = L.map('palletMap').setView([27.4763, -99.5164], 12); // Coordenadas de Nuevo Laredo
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([27.4763, -99.5164])
+          .addTo(map)
+          .bindPopup('Nuevo Laredo, Tamaulipas')
+          .openPopup();
+      }
+
+      // pintar historial y alertas vacíos
+      renderHistory();
+      renderAlertas();
+
+      setInterval(obtenerUltimaAlerta, 3000); // Llama a la API cada 3 segundos
+      console.log("Polling iniciado para recibir alertas de Vercel.");
+
+    });
+  </script>
+
+</body>
+</html>
